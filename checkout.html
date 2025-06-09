@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Checkout - Tokoku</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <h1>Tokoku</h1>
+    <nav>
+      <a href="index.html">Beranda</a>
+      <a href="cart.html">Keranjang</a>
+      <a href="checkout.html">Checkout</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Checkout</h2>
+    <p>Periksa kembali pesanan Anda dan klik tombol di bawah untuk memproses pesanan:</p>
+    <button id="btn-order">Pesan Sekarang</button>
+  </main>
+
+  <!-- EmailJS SDK pakai versi module -->
+  <script type="module">
+    import emailjs from 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
+
+    emailjs.init('79HbmDzBU_bPVGztp'); // GANTI dengan public key kamu
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const btnOrder = document.getElementById('btn-order');
+
+      btnOrder.addEventListener('click', () => {
+        const cart = JSON.parse(localStorage.getItem('cart')) || {};
+
+        if (Object.keys(cart).length === 0) {
+          alert('Keranjang kosong!');
+          return;
+        }
+
+        const message = Object.keys(cart)
+          .map(id => `Produk ID ${id} : ${cart[id]} qty`)
+          .join('\n');
+
+        emailjs.send('service_li2jksa', 'template_6y9ryhp', { message })
+          .then(() => {
+            alert('Pesanan berhasil dikirim ke admin!');
+            localStorage.removeItem('cart');
+            window.location.href = 'index.html';
+          })
+          .catch(err => {
+            alert('Gagal mengirim pesanan: ' + err.text);
+          });
+      });
+    });
+  </script>
+</body>
+</html>

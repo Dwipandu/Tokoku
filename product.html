@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Detail Produk - Tokoku</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <h1>Tokoku</h1>
+    <nav>
+      <a href="index.html">Beranda</a>
+      <a href="cart.html">Keranjang</a>
+      <a href="checkout.html">Checkout</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="product-detail" style="display:flex; flex-wrap:wrap; gap:2rem; margin-top:2rem;">
+      <div style="flex:1; min-width:280px;">
+        <img id="product-image" src="images/book1.jpg" alt="Judul Buku" style="width:100%; border-radius:8px; box-shadow:0 0 10px #000;" />
+      </div>
+      <div style="flex:2; min-width:280px;">
+        <h2 id="product-name">Judul Buku</h2>
+        <p id="product-price" style="font-size:1.2rem; color:#aaa; margin-bottom:1rem;">Rp 0</p>
+        <p style="margin-bottom:1.5rem; line-height:1.6;">
+          Deskripsi singkat tidak layak untuk di beli, tidak bisa di pamerkan ke tetangga teman kerabat, karna kelebihan mereka adalah kekurangan.
+        </p>
+        <button id="add-cart-btn" class="btn-add-cart" data-id="1">Tambah ke Keranjang</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- JS ambil data dari products.js -->
+  <script src="js/products.js"></script>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = parseInt(urlParams.get('id'));
+
+    const product = products.find(p => p.id === productId);
+
+    if (product) {
+      document.getElementById('product-image').src = product.image;
+      document.getElementById('product-name').textContent = product.title;
+      document.getElementById('product-price').textContent = `Rp ${product.price.toLocaleString('id-ID')}`;
+      document.getElementById('add-cart-btn').setAttribute('data-id', product.id);
+    } else {
+      document.querySelector('main').innerHTML = '<p style="color:#ccc;">Produk tidak ditemukan.</p>';
+    }
+
+    // fungsi tambah ke keranjang
+    document.getElementById('add-cart-btn').addEventListener('click', (e) => {
+      const id = e.target.getAttribute('data-id');
+      let cart = JSON.parse(localStorage.getItem('cart')) || {};
+      if (cart[id]) {
+        cart[id]++;
+      } else {
+        cart[id] = 1;
+      }
+      localStorage.setItem('cart', JSON.stringify(cart));
+      alert('Produk ditambahkan ke keranjang!');
+    });
+  </script>
+</body>
+</html>
