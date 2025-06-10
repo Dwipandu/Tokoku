@@ -7,70 +7,106 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <!-- Header -->
-  <div id="header-placeholder"></div>
 
-  <!-- Main content -->
-  <main>
-    <h2>Checkout</h2>
-    <form id="checkout-form" style="max-width: 500px; margin: auto;">
-      <div style="margin-bottom: 1rem;">
-        <label for="name">Nama:</label><br>
-        <input type="text" id="name" name="name" required style="width: 100%; padding: 0.5rem;">
-      </div>
+<!-- Tempat header -->
+<div id="header-placeholder"></div>
 
-      <div style="margin-bottom: 1rem;">
-        <label for="address">Alamat:</label><br>
-        <textarea id="address" name="address" rows="4" required style="width: 100%; padding: 0.5rem;"></textarea>
-      </div>
+<!-- Load products.js + cart.js -->
+<script src="js/products.js"></script>
+<script src="js/cart.js"></script>
 
-      <div style="margin-bottom: 1rem;">
-        <label for="payment">Metode Pembayaran:</label><br>
-        <select id="payment" name="payment" required style="width: 100%; padding: 0.5rem;">
-          <option value="">-- Pilih Metode --</option>
-          <option value="transfer">Transfer Bank</option>
-          <option value="cod">Bayar di Tempat (COD)</option>
-          <option value="ewallet">E-Wallet</option>
-        </select>
-      </div>
-
-      <div style="text-align: right;">
-        <button type="submit" class="btn-add-cart">Konfirmasi Pesanan</button>
-      </div>
-    </form>
-  </main>
-
-  <!-- Script -->
-  <script>
-    const checkoutForm = document.getElementById('checkout-form');
-
-    checkoutForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      // Simpan data pesanan (opsional, kalau mau pakai localStorage)
-      const order = {
-        name: document.getElementById('name').value,
-        address: document.getElementById('address').value,
-        payment: document.getElementById('payment').value,
-        timestamp: new Date().toISOString()
-      };
-
-      // Simpan ke localStorage (opsional kalau mau tampilkan di halaman Pesanan)
-      localStorage.setItem('latestOrder', JSON.stringify(order));
-
-      // Kosongkan keranjang
-      localStorage.removeItem('cart');
-
-      // Redirect ke halaman sukses
-      window.location.href = 'checkout-success.html';
-    });
-  </script>
-  <script>
+<!-- Load header + updateCartBadge -->
+<script>
 fetch('header.html')
   .then(response => response.text())
   .then(data => {
     document.getElementById('header-placeholder').innerHTML = data;
     updateCartBadge(); // supaya badge update setelah header dimuat
+  });
+</script>
+
+<!-- Main content -->
+<main>
+  <h2>Checkout</h2>
+  <form id="checkout-form" style="max-width: 500px; margin: auto;">
+    <div style="margin-bottom: 1rem;">
+      <label for="name">Nama:</label><br>
+      <input type="text" id="name" name="name" required style="width: 100%; padding: 0.5rem;">
+    </div>
+
+    <div style="margin-bottom: 1rem;">
+      <label for="address">Alamat:</label><br>
+      <textarea id="address" name="address" rows="4" required style="width: 100%; padding: 0.5rem;"></textarea>
+    </div>
+
+    <div style="margin-bottom: 1rem;">
+      <label for="payment">Metode Pembayaran:</label><br>
+      <select id="payment" name="payment" required style="width: 100%; padding: 0.5rem;">
+        <option value="">-- Pilih Metode --</option>
+        <option value="transfer">Transfer Bank</option>
+        <option value="cod">Bayar di Tempat (COD)</option>
+        <option value="ewallet">E-Wallet</option>
+      </select>
+    </div>
+
+    <div style="text-align: right;">
+      <button type="submit" class="btn-add-cart">Konfirmasi Pesanan</button>
+    </div>
+  </form>
+</main>
+
+<!-- Script -->
+<script>
+  const checkoutForm = document.getElementById('checkout-form');
+
+  checkoutForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    // Ambil data cart
+    const cart = JSON.parse(localStorage.getItem('cart')) || {};
+    const items = [];
+
+    let total = 0;
+
+    for (const id in cart) {
+      const product = products.find(p => p.id == id);
+      if (product) {
+        const quantity = cart[id];
+        items.push({
+          title: product.title,
+          quantity: quantity,
+          price: product.price
+        });
+        total += product.price * quantity;
+      }
+    }
+
+    // Ambil orders lama
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+
+    // Tambahkan order baru
+    orders.push({
+      date: new Date().toLocaleString('id-ID'),
+      items: items,
+      total: total
+    });
+
+    // Simpan kembali ke localStorage
+    localStorage.setItem('orders', JSON.stringify(orders));
+
+    // Optional: Simpan latestOrder (kalau kamu tetap ingin punya ini)
+    localStorage.setItem('latestOrder', JSON.stringify({
+      name: document.getElementById('name').value,
+      address: document.getElementById('address').value,
+      payment: document.getElementById('payment').value,
+      timestamp: new Date().toISOString()
+    }));
+
+    // Kosongkan keranjang
+    localStorage.removeItem('cart');
+
+    // Redirect ke halaman sukses
+    window.location.href = 'checkout-success.html';
   });
 </script>
 
