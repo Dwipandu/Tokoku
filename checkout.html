@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tokoku - Checkout</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .payment-options {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .payment-option {
+      flex: 1;
+      min-width: 120px;
+      background-color: #1e1e1e;
+      color: #eee;
+      border: 2px solid #444;
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+      user-select: none;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .payment-option img {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 0.5rem;
+    }
+
+    .payment-option input[type="radio"] {
+      display: none;
+    }
+
+    .payment-option span {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .payment-option:hover {
+      background-color: #333;
+      border-color: #666;
+      transform: scale(1.03);
+    }
+
+    .payment-option input[type="radio"]:checked + img + span {
+      color: #00e676;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Tempat header -->
+<div id="header-placeholder"></div>
+
+<!-- Load products.js + cart.js -->
+<script src="js/products.js"></script>
+<script src="js/cart.js"></script>
+
+<!-- Load header + updateCartBadge -->
+<script>
+fetch('header.html')
+  .then(response => response.text())
+  .then(data => {
+    document.getElementById('header-placeholder').innerHTML = data;
+    updateCartBadge(); // supaya badge update setelah header dimuat
+  });
+</script>
+
+<!-- Main content -->
+<main>
+  <h2>Checkout</h2>
+  <form id="checkout-form" style="max-width: 500px; margin: auto;">
+    <div style="margin-bottom: 1rem;">
+      <label for="name">Nama:</label><br>
+      <input type="text" id="name" name="name" required style="width: 100%; padding: 0.5rem;">
+    </div>
+
+    <div style="margin-bottom: 1rem;">
+      <label for="address">Alamat:</label><br>
+      <textarea id="address" name="address" rows="4" required style="width: 100%; padding: 0.5rem;"></textarea>
+    </div>
+
+    <div style="margin-bottom: 1rem;">
+      <label>Metode Pembayaran:</label><br>
+      <div class="payment-options">
+        <label class="payment-option">
+          <input type="radio" name="payment" value="transfer" required>
+          <img src="https://img.icons8.com/fluency/48/bank-building.png" alt="Transfer Bank">
+          <span>Transfer Bank</span>
+        </label>
+        <label class="payment-option">
+          <input type="radio" name="payment" value="cod" required>
+          <img src="https://img.icons8.com/color/48/delivery.png" alt="COD">
+          <span>Bayar di Tempat (COD)</span>
+        </label>
+        <label class="payment-option">
+          <input type="radio" name="payment" value="ewallet" required>
+          <img src="https://img.icons8.com/color/48/wallet--v1.png" alt="E-Wallet">
+          <span>E-Wallet</span>
+        </label>
+      </div>
+    </div>
+
+    <div style="text-align: right;">
+      <button type="submit" class="btn-add-cart">Konfirmasi Pesanan</button>
+    </div>
+  </form>
+</main>
+
+<!-- Script -->
+<script>
+  const checkoutForm = document.getElementById('checkout-form');
+
+  checkoutForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    // Ambil data cart
+    const cart = JSON.parse(localStorage.getItem('cart')) || {};
+    const items = [];
+
+    let total = 0;
+
+    for (const id in cart) {
+      const product = products.find(p => p.id == id);
+      if (product) {
+        const quantity = cart[id];
+        items.push({
+          title: product.title,
+          quantity: quantity,
+          price: product.price
+        });
+        total += product.price * quantity;
+      }
+    }
+
+    // Ambil orders lama
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+
+    // Tambahkan order baru
+    orders.push({
+      date: new Date().toLocaleString('id-ID'),
+      items: items,
+      total: total
+    });
+
+    // Simpan kembali ke localStorage
+    localStorage.setItem('orders', JSON.stringify(orders));
+
+    // Optional: Simpan latestOrder (kalau kamu tetap ingin punya ini)
+    localStorage.setItem('latestOrder', JSON.stringify({
+      name: document.getElementById('name').value,
+      address: document.getElementById('address').value,
+      payment: document.querySelector('input[name="payment"]:checked').value,
+      timestamp: new Date().toISOString()
+    }));
+
+    // Kosongkan keranjang
+    localStorage.removeItem('cart');
+
+    // Redirect ke halaman sukses
+    window.location.href = 'checkout-success.html';
+  });
+</script>
+
+</body>
+</html>
