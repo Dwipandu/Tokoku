@@ -499,3 +499,132 @@ h2 {
   border-bottom: 2px solid #444;
   padding-bottom: 0.7rem;
 }
+#cart-table {
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+  margin-top: 1rem !important;
+}
+
+#cart-table th {
+  background-color: #222 !important;
+  color: #f5f5f5 !important;
+  font-weight: 600 !important;
+  padding: 1rem !important;
+  text-align: center !important;
+}
+
+#cart-table td {
+  background-color: #1c1c1c !important;
+  color: #ddd !important;
+  padding: 1rem !important;
+  text-align: center !important;
+  border-bottom: 1px solid #333 !important;
+}
+
+#cart-table tr:hover td {
+  background-color: #2a2a2a !important;
+}
+
+#cart-table tr:last-child td {
+  border-bottom: none !important;
+}
+
+#cart-table + div button {
+  background-color: #3a3a3a !important;
+  color: #f0f0f0 !important;
+  border: none !important;
+  padding: 0.75rem 1.5rem !important;
+  font-size: 1rem !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  font-weight: 600 !important;
+  transition: background-color 0.3s ease, transform 0.2s ease !important;
+}
+
+#cart-table + div button:hover {
+  background-color: #555 !important;
+  transform: scale(1.03) !important;
+}
+
+.book {
+  background-color: #1f1f1f !important;
+  border-radius: 12px !important;
+  padding: 1.2rem !important;
+  text-align: center !important;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+}
+
+.book:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.25) !important;
+}
+
+.book img {
+  width: 100% !important;
+  height: 220px !important;
+  object-fit: cover !important;
+  border-radius: 10px !important;
+  margin-bottom: 1rem !important;
+}
+
+.book h2 {
+  font-size: 1rem !important;
+  margin-bottom: 0.4rem !important;
+  color: #f5f5f5 !important;
+  font-weight: 600 !important;
+}
+
+.book p {
+  color: #ccc !important;
+  margin-bottom: 1rem !important;
+  font-size: 0.95rem !important;
+  font-weight: 500 !important;
+}
+.quantity-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.quantity-control button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background-color: #444;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.quantity-control button:hover {
+  background-color: #666;
+  transform: scale(1.1);
+}
+
+.cancel-order-btn {
+  margin-top: 1rem;
+  padding: 0.6rem 1rem;
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.cancel-order-btn:hover {
+  background-color: #c0392b;
+}
