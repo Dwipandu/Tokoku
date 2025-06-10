@@ -68,17 +68,6 @@
 <!-- JS -->
 <script src="js/products.js"></script>
 <script>
-  // Tambah ke keranjang
-  document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('btn-add-cart') && e.target.tagName === 'BUTTON') {
-      const id = e.target.getAttribute('data-id');
-      let cart = JSON.parse(localStorage.getItem('cart')) || {};
-      if (cart[id]) {
-        cart[id]++;
-      } else {
-        cart[id] = 1;
-      }
-      localStorage.setItem('cart', JSON.stringify(cart));
 
       // Tampilkan notifikasi toast
       showToast('Produk ditambahkan ke keranjang!');
