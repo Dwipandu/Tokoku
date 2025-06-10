@@ -3,57 +3,76 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Checkout - Tokoku</title>
+  <title>Tokoku - Checkout</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <header>
-    <h1>Tokoku</h1>
-    <nav>
-      <a href="index.html">Beranda</a>
-      <a href="cart.html">Keranjang</a>
-      <a href="checkout.html">Checkout</a>
-    </nav>
-  </header>
+  <!-- Header -->
+  <div id="header-placeholder"></div>
 
+  <!-- Main content -->
   <main>
     <h2>Checkout</h2>
-    <p>Periksa kembali pesanan Anda dan klik tombol di bawah untuk memproses pesanan:</p>
-    <button id="btn-order">Pesan Sekarang</button>
+    <form id="checkout-form" style="max-width: 500px; margin: auto;">
+      <div style="margin-bottom: 1rem;">
+        <label for="name">Nama:</label><br>
+        <input type="text" id="name" name="name" required style="width: 100%; padding: 0.5rem;">
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label for="address">Alamat:</label><br>
+        <textarea id="address" name="address" rows="4" required style="width: 100%; padding: 0.5rem;"></textarea>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label for="payment">Metode Pembayaran:</label><br>
+        <select id="payment" name="payment" required style="width: 100%; padding: 0.5rem;">
+          <option value="">-- Pilih Metode --</option>
+          <option value="transfer">Transfer Bank</option>
+          <option value="cod">Bayar di Tempat (COD)</option>
+          <option value="ewallet">E-Wallet</option>
+        </select>
+      </div>
+
+      <div style="text-align: right;">
+        <button type="submit" class="btn-add-cart">Konfirmasi Pesanan</button>
+      </div>
+    </form>
   </main>
 
-  <!-- EmailJS SDK pakai versi module -->
-  <script type="module">
-    import emailjs from 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
+  <!-- Script -->
+  <script>
+    const checkoutForm = document.getElementById('checkout-form');
 
-    emailjs.init('79HbmDzBU_bPVGztp'); // GANTI dengan public key kamu
+    checkoutForm.addEventListener('submit', function(e) {
+      e.preventDefault();
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const btnOrder = document.getElementById('btn-order');
+      // Simpan data pesanan (opsional, kalau mau pakai localStorage)
+      const order = {
+        name: document.getElementById('name').value,
+        address: document.getElementById('address').value,
+        payment: document.getElementById('payment').value,
+        timestamp: new Date().toISOString()
+      };
 
-      btnOrder.addEventListener('click', () => {
-        const cart = JSON.parse(localStorage.getItem('cart')) || {};
+      // Simpan ke localStorage (opsional kalau mau tampilkan di halaman Pesanan)
+      localStorage.setItem('latestOrder', JSON.stringify(order));
 
-        if (Object.keys(cart).length === 0) {
-          alert('Keranjang kosong!');
-          return;
-        }
+      // Kosongkan keranjang
+      localStorage.removeItem('cart');
 
-        const message = Object.keys(cart)
-          .map(id => `Produk ID ${id} : ${cart[id]} qty`)
-          .join('\n');
-
-        emailjs.send('service_li2jksa', 'template_6y9ryhp', { message })
-          .then(() => {
-            alert('Pesanan berhasil dikirim ke admin!');
-            localStorage.removeItem('cart');
-            window.location.href = 'index.html';
-          })
-          .catch(err => {
-            alert('Gagal mengirim pesanan: ' + err.text);
-          });
-      });
+      // Redirect ke halaman sukses
+      window.location.href = 'checkout-success.html';
     });
   </script>
+  <script>
+fetch('header.html')
+  .then(response => response.text())
+  .then(data => {
+    document.getElementById('header-placeholder').innerHTML = data;
+    updateCartBadge(); // supaya badge update setelah header dimuat
+  });
+</script>
+
 </body>
 </html>

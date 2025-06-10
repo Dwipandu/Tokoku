@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tokoku - Pesanan Saya</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="header-placeholder"></div>
+  <main>
+    <h2>Pesanan Terakhir</h2>
+    <div id="order-info" style="background-color: #1e1e1e; padding: 1rem; border-radius: 8px;">
+      <!-- Pesanan akan ditampilkan lewat JS -->
+    </div>
+  </main>
+
+  <script>
+    const orderInfoDiv = document.getElementById('order-info');
+    const latestOrder = JSON.parse(localStorage.getItem('latestOrder'));
+
+    if (latestOrder) {
+      orderInfoDiv.innerHTML = `
+        <p><strong>Nama:</strong> ${latestOrder.name}</p>
+        <p><strong>Alamat:</strong> ${latestOrder.address}</p>
+        <p><strong>Metode Pembayaran:</strong> ${latestOrder.payment}</p>
+        <p><strong>Waktu Pesan:</strong> ${new Date(latestOrder.timestamp).toLocaleString('id-ID')}</p>
+      `;
+    } else {
+      orderInfoDiv.innerHTML = '<p>Belum ada pesanan.</p>';
+    }
+  </script>
+  
+  <script>
+fetch('header.html')
+  .then(response => response.text())
+  .then(data => {
+    document.getElementById('header-placeholder').innerHTML = data;
+    updateCartBadge(); // supaya badge update setelah header dimuat
+  });
+</script>
+
+</body>
+</html>

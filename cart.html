@@ -3,122 +3,79 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Keranjang - BukuKita</title>
+  <title>Tokoku - Keranjang</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <header>
-    <h1>BukuKita</h1>
-    <nav>
-      <a href="index.html">Beranda</a>
-      <a href="cart.html">Keranjang</a>
-      <a href="checkout.html">Checkout</a>
-    </nav>
-  </header>
+
+  <!-- Header -->
+  <div id="header-placeholder"></div>
+
+  <!-- Main content -->
   <main>
-    <h2>Keranjang Belanja</h2>
-    <div id="cart-container"></div>
+    <h2>Keranjang</h2>
+    <table id="cart-table">
+      <thead>
+        <tr>
+          <th>Produk</th>
+          <th>Harga</th>
+          <th>Jumlah</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Isi keranjang akan dimasukkan dengan JS -->
+      </tbody>
+    </table>
+
+    <!-- Tombol Bayar -->
+    <div style="text-align: right; margin-top: 1.5rem;">
+      <button onclick="goToCheckout()" class="btn-add-cart">Bayar Sekarang</button>
+    </div>
   </main>
 
-  <script src="js/cart.js"></script>
+  <!-- Script -->
   <script>
-    const products = {
-      1: { id: 1, title: 'Judul Buku 1', price: 75000 },
-      2: { id: 2, title: 'Judul Buku 2', price: 85000 },
-      3: { id: 3, title: 'Judul Buku 3', price: 95000 },
-      4: { id: 4, title: 'Judul Buku 4', price: 120000 },
-    };
+    const products = [
+      { id: 1, title: 'Abi Cabul', price: 20000, image: 'https://i.supaimg.com/031524d0-a2de-4662-9228-b49eb38d1639.jpg' },
+      { id: 2, title: 'Kubil turu', price: 85000, image: 'https://i.supaimg.com/e5ab2de8-04c5-4b5d-9fdc-0492d3cf3410.jpg' },
+      { id: 3, title: 'juliet romuna', price: 950000, image: 'https://i.supaimg.com/1b147f6d-afd8-4915-b62d-608936491de5.jpg' },
+      { id: 4, title: 'daus stang saher', price: 120000, image: 'https://i.supaimg.com/b7a6bf7b-984e-4ef1-8041-fd2432979238.jpg' }
+    ];
 
-    const cartContainer = document.getElementById('cart-container');
+    const cart = JSON.parse(localStorage.getItem('cart')) || {};
+    const cartTableBody = document.querySelector('#cart-table tbody');
 
-    function renderCart() {
-      const cart = JSON.parse(localStorage.getItem('cart')) || {};
-      cartContainer.innerHTML = '';
+    // Tampilkan isi keranjang
+    Object.keys(cart).forEach(productId => {
+      const product = products.find(p => p.id == productId);
+      const quantity = cart[productId];
+      const total = product.price * quantity;
 
-      if (Object.keys(cart).length === 0) {
-        cartContainer.innerHTML = '<p>Keranjang kosong.</p>';
-        return;
-      }
-
-      let total = 0;
-      const table = document.createElement('table');
-      table.style.width = '100%';
-      table.innerHTML = `
-        <thead>
-          <tr>
-            <th>Buku</th>
-            <th>Jumlah</th>
-            <th>Harga</th>
-            <th>Subtotal</th>
-            <th>Aksi</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${product.title}</td>
+        <td>Rp ${product.price.toLocaleString('id-ID')}</td>
+        <td>${quantity}</td>
+        <td>Rp ${total.toLocaleString('id-ID')}</td>
       `;
-      const tbody = table.querySelector('tbody');
+      cartTableBody.appendChild(row);
+    });
 
-      for (const id in cart) {
-        const qty = cart[id];
-        const product = products[id];
-        const subtotal = product.price * qty;
-        total += subtotal;
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${product.title}</td>
-          <td><input type="number" min="1" value="${qty}" data-id="${id}" class="qty-input" style="width:60px" /></td>
-          <td>Rp ${product.price.toLocaleString('id-ID')}</td>
-          <td>Rp ${subtotal.toLocaleString('id-ID')}</td>
-          <td><button class="btn-remove" data-id="${id}">Hapus</button></td>
-        `;
-        tbody.appendChild(tr);
-      }
-
-      const trTotal = document.createElement('tr');
-      trTotal.innerHTML = `
-        <td colspan="3" style="text-align:right; font-weight:bold;">Total:</td>
-        <td colspan="2" style="font-weight:bold;">Rp ${total.toLocaleString('id-ID')}</td>
-      `;
-      tbody.appendChild(trTotal);
-
-      cartContainer.appendChild(table);
-
-      // Event update qty
-      const qtyInputs = document.querySelectorAll('.qty-input');
-      qtyInputs.forEach(input => {
-        input.addEventListener('change', e => {
-          const id = e.target.getAttribute('data-id');
-          let val = parseInt(e.target.value);
-          if (isNaN(val) || val < 1) val = 1;
-          updateQuantity(id, val);
-        });
-      });
-
-      // Event hapus
-      const btnRemove = document.querySelectorAll('.btn-remove');
-      btnRemove.forEach(btn => {
-        btn.addEventListener('click', e => {
-          const id = e.target.getAttribute('data-id');
-          removeFromCart(id);
-        });
-      });
+    // Fungsi untuk pindah ke halaman checkout
+    function goToCheckout() {
+      window.location.href = 'checkout.html';
     }
-
-    function updateQuantity(id, qty) {
-      const cart = JSON.parse(localStorage.getItem('cart')) || {};
-      cart[id] = qty;
-      localStorage.setItem('cart', JSON.stringify(cart));
-      renderCart();
-    }
-
-    function removeFromCart(id) {
-      const cart = JSON.parse(localStorage.getItem('cart')) || {};
-      delete cart[id];
-      localStorage.setItem('cart', JSON.stringify(cart));
-      renderCart();
-    }
-
-    renderCart();
   </script>
+  <script>
+fetch('header.html')
+  .then(response => response.text())
+  .then(data => {
+    document.getElementById('header-placeholder').innerHTML = data;
+    updateCartBadge(); // supaya badge update setelah header dimuat
+  });
+</script>
+
+
 </body>
 </html>
