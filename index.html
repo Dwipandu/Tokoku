@@ -16,6 +16,7 @@
   </main>
 
   <script src="js/products.js"></script>
+  <script src="js/script.js"></script>
   <script>
     const productList = document.getElementById('product-list');
 
@@ -145,6 +146,15 @@ fetch('header.html')
     }
   });
 }
+</script>
+<!-- Pastikan products.js di-load sebelum script.js -->
+<script src="js/products.js"></script>
+<script src="js/script.js"></script>
+
+<!-- Verifikasi loading dengan console.log -->
+<script>
+  console.log("Produk:", window.products); // Cek apakah produk terdefinisi
+  console.log("Fungsi displayProducts:", typeof displayProducts); // Cek fungsi
 </script>
 </body>
 </html>
