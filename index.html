@@ -122,7 +122,30 @@ fetch('header.html')
     updateCartBadge(); // supaya badge update setelah header dimuat
   });
 </script>
-
+<script>
+  function searchProducts() {
+  const input = document.getElementById('search-input').value.toLowerCase();
+  const productCards = document.querySelectorAll('.book');
+  
+  productCards.forEach(card => {
+    const title = card.querySelector('h2').textContent.toLowerCase();
+    const shouldShow = title.includes(input);
+    
+    // Animasi fade out/in
+    if (!shouldShow) {
+      card.style.opacity = '0';
+      setTimeout(() => {
+        card.classList.add('hidden');
+      }, 300);
+    } else {
+      card.classList.remove('hidden');
+      setTimeout(() => {
+        card.style.opacity = '1';
+      }, 50);
+    }
+  });
+}
+</script>
 </body>
 </html>
 
